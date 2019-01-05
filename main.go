@@ -1,44 +1,22 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
-	r "gopkg.in/rethinkdb/rethinkdb-go.v5"
+	"github.com/susmitagr8/news-app/store"
+
+	"github.com/gorilla/handlers"
 )
 
-type Profile struct {
-	Status string
-}
-
-func healthcheck(w http.ResponseWriter, r1 *http.Request) {
-	session, err := r.Connect(r.ConnectOpts{
-		Address:  "localhost:28015",
-		Database: "newz",
-	})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Println(session)
-	profile := Profile{"Healthy"}
-
-	js, err := json.Marshal(profile)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Write(js)
-}
 func main() {
-	http.HandleFunc("/healthcheck", healthcheck)
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		panic(err)
-	}
+
+	router := store.NewRouter() // create routes
+
+	// These two lines are important if you're designing a front-end to utilise this API methods
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
+
+	// Launch server with CORS validations
+	log.Fatal(http.ListenAndServe(":"+"8081", handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }
