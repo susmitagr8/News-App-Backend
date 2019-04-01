@@ -4,9 +4,17 @@ type RegisteredUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
-
+type Message struct {
+	Article_id string `json:"art_id"`
+	Author_id  string `json:"aut_id"`
+	Message    string `json:"message"`
+	Time string `json:"time"`
+}
+type ResData struct{
+	Data []Message 
+}
 type JwtToken struct {
-	Token string `json:"token"`
+	Token string `json:"token"`                        
 }
 
 type Exception struct {
