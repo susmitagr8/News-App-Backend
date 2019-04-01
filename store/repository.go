@@ -6,17 +6,8 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-//Repository ...
 type Repository struct{}
 
-// SERVER the DB server
-const SERVER = "localhost:27017"
-
-// DBNAME the name of the DB instance
-const DBNAME = "news-user"
-
-// COLLECTION is the name of the collection in DB
-const COLLECTION = "store"
 
 var productId = 10
 
@@ -30,6 +21,5 @@ func (r Repository) AddUser(product User) bool {
 		log.Fatal(err)
 		return false
 	}
-
 	return true
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var controller = &Controller{Repository: Repository{}}
+var controller = &Controller{Repository: Repository{},MessageRepo:MessageRepo{}}
 
 // Route defines a route
 type Route struct {
@@ -33,9 +33,21 @@ var routes = Routes{
 		"/AddUser",
 		controller.AddUser,
 	},
+	Route{
+		"AddMessage",
+		"POST",
+		"/messageadd",
+		controller.AddMessage,
+	},
+	Route{
+	"GetMessages",
+	"GET",
+	"/messageget",
+	controller.FindMessage,
+	},
 	// Route{
 	// 	"UpdateProduct",
-	// 	"PUT",
+	// 	"PUT"
 	// 	"/UpdateProduct",
 	// 	AuthenticationMiddleware(controller.UpdateProduct),
 	// }
@@ -48,7 +60,6 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 		log.Println(route.Name)
 		handler = route.HandlerFunc
-
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).

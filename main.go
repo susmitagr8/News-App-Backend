@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/susmitagr8/news-app/store"
+	"news-app-backend/store"
 
 	"github.com/gorilla/handlers"
 )
@@ -12,7 +12,6 @@ import (
 func main() {
 
 	router := store.NewRouter() // create routes
-
 	// These two lines are important if you're designing a front-end to utilise this API methods
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
