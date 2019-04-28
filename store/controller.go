@@ -18,7 +18,7 @@ import (
 
 //Controller ...
 type Controller struct {
-	Repository Repository
+	repository Repository
 }
 
 /* Middleware handler to handle all requests for authentication */
@@ -104,16 +104,13 @@ func (c *Controller) AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := r.Body.Close(); err != nil {
-		log.Fatalln("Error AddUser", err)
-	}
-
 	if err := json.Unmarshal(body, &product); err != nil { // unmarshall body contents as a type Candidate
 		log.Println(err)
 	}
 
+	log.Println("hello")
 	log.Println(product)
-	success := c.Repository.AddUser(product) // adds the user to the DB
+	success := c.repository.AddUser(product) // adds the user to the DB
 	if !success {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -121,7 +118,103 @@ func (c *Controller) AddUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	responseMsg := ResponseMessage{"Successful addition of user"}
+	responseMsg := ResponseMessage{Status: "Successful addition of user"}
+	succ, _ := json.Marshal(responseMsg)
+	w.Write(succ)
+}
+
+func (c *Controller) AddChatWithoutIndex(w http.ResponseWriter, r *http.Request) {
+	log.Println("in add Chat handle")
+	var comment AddChat
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // read the body of the request
+
+	log.Println(body)
+
+	if err != nil {
+		log.Fatalln("Error AddUser", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.Unmarshal(body, &comment); err != nil { // unmarshall body contents as a type Candidate
+		log.Println(err)
+	}
+	success := false
+	for i := 0; i <= 4362; i++ {
+		success = c.repository.AddCommentWithoutIndex(comment) // adds the user to the DB
+	}
+	log.Println(success)
+	// if !success {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	// w.WriteHeader(http.StatusCreated)
+	// responseMsg := ResponseMessage{"Successful addition of message to news id " + comment.Parent}
+	// succ, _ := json.Marshal(responseMsg)
+	// w.Write(succ)
+}
+
+func (c *Controller) AddChatWithIndex(w http.ResponseWriter, r *http.Request) {
+	log.Println("in add Chat handle")
+	var comment AddChat
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // read the body of the request
+
+	log.Println(body)
+
+	if err != nil {
+		log.Fatalln("Error AddUser", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.Unmarshal(body, &comment); err != nil { // unmarshall body contents as a type Candidate
+		log.Println(err)
+	}
+	success := false
+	
+		success = c.repository.AddCommentWithIndex(comment) // adds the user to the DB
+	log.Println(success)
+	// if !success {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	// w.WriteHeader(http.StatusCreated)
+	// responseMsg := ResponseMessage{"Successful addition of message to news id " + comment.Parent}
+	// succ, _ := json.Marshal(responseMsg)
+	// w.Write(succ)
+}
+func (c *Controller) GetChatHistoryWithoutIndex(w http.ResponseWriter, r *http.Request) {
+	var comment AddChat
+	comment.Parent = r.URL.Query()["parent_id"][0]
+	success := c.repository.GetChatHistoryFromDBWithoutIndex(comment) // adds the user to the DB
+	if len(success) == 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	responseMsg := ChatHistory{ListHistory: success}
+	succ, _ := json.Marshal(responseMsg)
+	w.Write(succ)
+}
+
+func (c *Controller) GetChatHistoryWithIndex(w http.ResponseWriter, r *http.Request) {
+	var comment AddChat
+	comment.Parent = r.URL.Query()["parent_id"][0]
+	success := c.repository.GetChatHistoryFromDBWithIndex(comment) // adds the user to the DB
+	if len(success) == 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	responseMsg := ChatHistory{ListHistory: success}
 	succ, _ := json.Marshal(responseMsg)
 	w.Write(succ)
 }

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/susmitagr8/news-app/store"
+	"news-app/store"
 
 	"github.com/gorilla/handlers"
 )

@@ -25,3 +25,14 @@ type User struct {
 	Password string `json:"password"`
 	Email    string `json:"email"`
 }
+
+// AddChat represents a comment
+type AddChat struct {
+	Parent string `json:"parent"`
+	Author string `json:"author"`
+	Text   string `json:"chatText"`
+}
+
+type ChatHistory struct {
+	ListHistory []AddChat `json:"list"`
+}
