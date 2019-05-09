@@ -1,22 +1,42 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"news-app/store"
 
-	"github.com/gorilla/handlers"
+	"github.com/rs/cors"
 )
 
 func main() {
+	router := store.NewRouter()
+	// router.HandleFunc("/xx", xyz).Methods("OPTIONS")
+	// router := store.NewRouter() // create routes
+	// // These two lines are important if you're designing a front-end to utilise this API methods
+	// allowedHeaders := handlers.AllowedHeaders([]string{"*"})
+	// allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	// allowedMethods := handlers.AllowedMethods([]string{http.MethodOptions, http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut})
+	// allowedCre := handlers.AllowCredentials()
+	// // Launch server with CORS validations
+	// log.Fatal(http.ListenAndServe(":"+"8081", handlers.CORS(allowedHeaders, allowedCre, allowedOrigins, allowedMethods)(router)))
 
-	router := store.NewRouter() // create routes
+	corsOpts := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, //you service is available and allowed for this base url
+		AllowedMethods: []string{
+			http.MethodGet, //http methods for your app
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead,
+		},
 
-	// These two lines are important if you're designing a front-end to utilise this API methods
-	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
-	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
+		AllowedHeaders: []string{
+			"*", //or you can your header key values which you are using in your application
 
-	// Launch server with CORS validations
-	log.Fatal(http.ListenAndServe(":"+"8081", handlers.CORS(allowedOrigins, allowedMethods)(router)))
+		},
+	})
+
+	http.ListenAndServe(":8081", corsOpts.Handler(router))
 }

@@ -9,17 +9,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-//Repository ...
 type Repository struct{}
-
-// SERVER the DB server
-// const SERVER = "mongodb://susmitagr8:susmita1@ds145704.mlab.com:45704/newz-app-database"
-
-// // DBNAME the name of the DB instance
-// const DBNAME = "newz-app-database"
-
-// // COLLECTION is the name of the collection in DB
-// const COLLECTION = "store"
 
 const SERVER = "mongodb://susmita123:susmita123@ds145704.mlab.com:45704/newz-app-database"
 
@@ -27,7 +17,7 @@ const SERVER = "mongodb://susmita123:susmita123@ds145704.mlab.com:45704/newz-app
 const DBNAME = "newz-app-database"
 
 // COLLECTION is the name of the collection in DB
-const COLLECTION = "store"
+const COLLECTION = "chat-cache"
 
 var productId = 10
 
@@ -37,12 +27,11 @@ func (r Repository) AddUser(product User) bool {
 	session, err := mgo.Dial(SERVER)
 	defer session.Close()
 
-	session.DB(DBNAME).C(COLLECTION).Insert(product)
+	session.DB(DBNAME).C("users").Insert(product)
 	if err != nil {
 		log.Fatal(err)
 		return false
 	}
-
 	return true
 }
 

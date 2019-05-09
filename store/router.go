@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var controller = &Controller{repository: Repository{}}
+var controller = &Controller{repository: Repository{}, MessageRepo: MessageRepo{}}
 
 // Route defines a route
 type Route struct {
@@ -23,56 +23,51 @@ type Routes []Route
 var routes = Routes{
 	Route{
 		"Authentication",
-		"POST",
+		http.MethodPost,
 		"/get-token",
 		controller.GetToken,
 	},
 	Route{
 		"AddUser",
-		"POST",
+		http.MethodPost,
 		"/AddUser",
 		controller.AddUser,
 	},
 	Route{
-		"AddChatWithIndex",
-		"POST",
-		"/AddChatWithIndex",
-		controller.AddChatWithIndex,
+		"AddMessage",
+		http.MethodPost,
+		"/messageadd",
+		AuthenticationMiddleware(controller.AddMessage),
 	},
 	Route{
-		"AddChatWithoutIndex",
-		"POST",
-		"/AddChatWithoutIndex",
-		controller.AddChatWithoutIndex,
+		"GetMessages",
+		http.MethodGet,
+		"/messageget",
+		AuthenticationMiddleware(controller.FindMessage),
 	},
 	Route{
-		"GetChatHistoryWithIndex",
-		"GET",
-		"/ChatHistoryWithIndex",
-		controller.GetChatHistoryWithIndex,
-	},
-	Route{
-		"GetChatHistoryWithoutIndex",
-		"GET",
-		"/ChatHistoryWithoutIndex",
-		controller.GetChatHistoryWithoutIndex,
+		"XX",
+		http.MethodOptions,
+		"/messageadd",
+		controller.Xyz,
 	},
 	// Route{
-	// 	"UpdateProduct",
-	// 	"PUT",
-	// 	"/UpdateProduct",
-	// 	AuthenticationMiddleware(controller.UpdateProduct),
-	// }
+	// 	"GetMessages",
+	// 	http.MethodGet,
+	// 	"/messageget",
+	// 	AuthenticationMiddleware(controller.FindMessage),
+	// },
 }
 
 // NewRouter configures a new router to the API
 func NewRouter() *mux.Router {
+	log.Println("oooooooooooooooo")
 	router := mux.NewRouter().StrictSlash(true)
+
 	for _, route := range routes {
 		var handler http.Handler
 		log.Println(route.Name)
 		handler = route.HandlerFunc
-
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
